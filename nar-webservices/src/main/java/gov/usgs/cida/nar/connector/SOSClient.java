@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class SOSClient extends Thread implements AutoCloseable {
 	
 	private static final Logger log = LoggerFactory.getLogger(SOSClient.class);
-	private static final int MAX_CONNECTIONS = 4;
+	private static final int MAX_CONNECTIONS = 8;
 	private static int numConnections = 0;
 	
 	private File file;
