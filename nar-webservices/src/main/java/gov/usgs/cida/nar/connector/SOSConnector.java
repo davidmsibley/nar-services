@@ -81,7 +81,7 @@ public class SOSConnector implements IConnector, Closeable {
 					@Override
 					public String transform(TableRow row) {
 						String value = row.getValue(SOS_SITE_COL);
-						int orderedVal = value.length() * Integer.parseInt(value);
+						long orderedVal = value.length() * Long.parseLong(value);
 						String stringVal = String.valueOf(orderedVal);
 						return stringVal;
 					}
