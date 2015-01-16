@@ -4,5 +4,5 @@
 
 #SITE_FLOW_ID USGS or other agency station identifier for streamflow measurement
 #DATE  Date
-#FLOW Daily, mean discharge in cubic feet per second
-#WY Water year
+#"FLOW Daily, mean discharge in cubic feet per second"
+#WY Water year (10/1 through 9/30)

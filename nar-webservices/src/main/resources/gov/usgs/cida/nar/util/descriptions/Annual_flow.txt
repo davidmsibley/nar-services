@@ -2,5 +2,5 @@
 #
 #SITE_QW_ID USGS station identifier for water-quality sampling
 #SITE_FLOW_ID USGS or other agency station identifier for streamflow measurement
-#WY Water year
-#FLOW Flow volume, in acre-feet
+#WY Water year (10/1 through 9/30)
+#"FLOW Flow volume, in acre-feet"
