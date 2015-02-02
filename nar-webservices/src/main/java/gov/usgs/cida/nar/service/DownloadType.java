@@ -78,7 +78,7 @@ public enum DownloadType {
                                         "http://cida.usgs.gov/def/NAR/procedure/monthly_mass_upper_95/REG_4",
                                         "http://cida.usgs.gov/def/NAR/procedure/monthly_mass_upper_95/REG_PRELIM"
                     )),
-	monthlyFlow("Monthly flow", 
+	mayFlow("Monthly flow", 
 			Arrays.asList(
 					"http://cida.usgs.gov/def/NAR/procedure/monthly_flow"
 					)),

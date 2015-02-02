@@ -131,7 +131,7 @@ public class DownloadService {
 						SiteInformationService.getStationFeatures(siteType,	stationId,state)
 						)
 				) {
-					//include both may load and monthly flow
+					//include both may load and may flow
 					addAggregatedSosEntry(zip, 
 							DownloadType.mayLoad,
 							mimeType,
@@ -146,7 +146,7 @@ public class DownloadService {
 							endDateTime);
 	
 					addAggregatedSosEntry(zip, 
-							DownloadType.monthlyFlow,
+							DownloadType.mayFlow,
 							mimeType,
 							dataType,
 							qwDataType,
@@ -237,7 +237,7 @@ public class DownloadService {
 		List<String> constituentsToUse = new ArrayList<>();
 		if(downloadType.equals(DownloadType.annualFlow) 
 				|| downloadType.equals(DownloadType.dailyFlow)
-				|| downloadType.equals(DownloadType.monthlyFlow)) {
+				|| downloadType.equals(DownloadType.mayFlow)) {
 			constituentsToUse.add(FLOW_CONSTITUENT);
 		} else {
 			constituentsToUse.addAll(constituent);
@@ -245,7 +245,7 @@ public class DownloadService {
 		
 		//if mayLoad/monthlyFlow, enforce MRB_SITE_TYPE if not selected
 		List<String> siteType = new ArrayList<>(inSiteType);
-		if(downloadType.equals(DownloadType.mayLoad) || downloadType.equals(DownloadType.monthlyFlow)) {
+		if(downloadType.equals(DownloadType.mayLoad) || downloadType.equals(DownloadType.mayFlow)) {
 			if(!siteType.contains(SiteInformationService.MRB_SITE_TYPE_VAL)) { //ensure MRB site type is requested
 				siteType.add(SiteInformationService.MRB_SITE_TYPE_VAL);
 			}
@@ -328,7 +328,7 @@ public class DownloadService {
 			) {
 				//include both may
 				appendDataTypeDescription(sb, DownloadType.mayLoad);
-				appendDataTypeDescription(sb, DownloadType.monthlyFlow);
+				appendDataTypeDescription(sb, DownloadType.mayFlow);
 			}
 		}
 

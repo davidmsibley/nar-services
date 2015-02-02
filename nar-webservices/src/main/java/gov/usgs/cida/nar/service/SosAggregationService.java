@@ -224,7 +224,7 @@ public class SosAggregationService {
 			case annualFlow:
 				steps.addAll(getAnnualFlowSteps(steps));
 				break;
-			case monthlyFlow:
+			case mayFlow:
 				steps.addAll(getMonthlyFlowSteps(steps));
 				break;
 			case dailyFlow:
