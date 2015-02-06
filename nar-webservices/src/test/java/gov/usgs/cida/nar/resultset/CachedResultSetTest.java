@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -63,6 +64,8 @@ public class CachedResultSetTest {
 			String value = row.getValue(valueCol);
 			assertThat("test" + i++, is(equalTo(value)));
 		}
+		rset.close();
+		FileUtils.deleteQuietly(file);
 	}
 
 }
