@@ -1,11 +1,18 @@
 package gov.usgs.cida.sos;
 
-import java.io.FileNotFoundException;
+import gov.usgs.cida.nude.resultset.inmemory.IteratorWrappingResultSet;
+import gov.usgs.cida.nude.time.DateRange;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.geotools.xlink.XLINK;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -31,6 +38,11 @@ public class WaterML2Parser {
 		XMLStreamReader xmlReader = XMLInputFactory.newInstance().createXMLStreamReader(reader);
 		FilteredObservationCollection observationCollection = new FilteredObservationCollection(xmlReader, filter);
 		return observationCollection;
+	}
+	
+	public ResultSet parse() throws XMLStreamException, EndOfXmlStreamException {
+		ResultSet rs = new IteratorWrappingResultSet(getObservations().tableRowIterator());
+		return rs;
 	}
 	
 }

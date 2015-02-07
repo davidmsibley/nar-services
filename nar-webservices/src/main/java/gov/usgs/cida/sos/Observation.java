@@ -1,6 +1,18 @@
 package gov.usgs.cida.sos;
 
+import gov.usgs.cida.nude.column.Column;
+import gov.usgs.cida.nude.column.SimpleColumn;
+import gov.usgs.cida.nude.resultset.inmemory.TableRow;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.collections.BeanMap;
 import org.joda.time.DateTime;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  *
