@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gov.usgs.cida.nar</groupId>
 	<artifactId>nar-services</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>NAWQA Annual Reporting Services Parent Project</name>
 
@@ -71,7 +71,7 @@
 		<connection>scm:git:https://github.com/USGS-CIDA/nar-services.git</connection>
 		<developerConnection>scm:git:git@github.com:USGS-CIDA/nar-services.git</developerConnection>
 		<url>https://github.com/USGS-CIDA/nar-services</url>
-		<tag>nar-services-1.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>

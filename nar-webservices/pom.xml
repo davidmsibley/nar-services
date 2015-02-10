@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>nar-services</artifactId>
 		<groupId>gov.usgs.cida.nar</groupId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>nar-webservices</artifactId>
 	<packaging>war</packaging>
