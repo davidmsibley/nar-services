@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gov.usgs.cida.nar</groupId>
 	<artifactId>nar-services</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>NAWQA Annual Reporting Services Parent Project</name>
 
