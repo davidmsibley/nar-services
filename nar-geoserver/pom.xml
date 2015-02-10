@@ -4,7 +4,7 @@
     <parent>
         <artifactId>nar-services</artifactId>
         <groupId>gov.usgs.cida.nar</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <groupId>gov.usgs.cida.nar</groupId>
     <artifactId>nar-geoserver</artifactId>
