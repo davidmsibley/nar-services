@@ -1,7 +1,9 @@
 package gov.usgs.cida.nar.connector;
 
+import gov.usgs.cida.nar.resultset.CachedResultSet;
 import gov.usgs.cida.sos.DataAvailabilityMember;
 import gov.usgs.cida.sos.EndOfXmlStreamException;
+import gov.usgs.cida.sos.WaterML2Parser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,14 +98,14 @@ public class SOSClient extends Thread implements AutoCloseable {
 		return dataAvailabilityMembers;
 	}
 	
-	public InputStream readFile() {
-		InputStream fileInput = null;
+	public ResultSet readFile() {
+		CachedResultSet result = null;
 		try {
-			fileInput = new FileInputStream(file);
-		} catch (FileNotFoundException ex) {
-			log.error("Temporary file not found", ex);
+			result = new CachedResultSet(this.file);
+		} catch (IOException ex) {
+			log.debug("Error retrieving cached dataset", ex);
 		}
-		return fileInput;
+		return result;
 	}
 
 	private synchronized void fetchData() {
@@ -112,9 +116,7 @@ public class SOSClient extends Thread implements AutoCloseable {
 		clientConfig.property(ClientProperties.CONNECT_TIMEOUT, 10000);
 		clientConfig.property(ClientProperties.READ_TIMEOUT, 180000);
 		Client client = ClientBuilder.newClient(clientConfig);
-		// TODO do this proper
 		
-		OutputStream os = null;
 		InputStream returnStream = null;
 		try {
 			while (numConnections >= MAX_CONNECTIONS) {
@@ -131,14 +133,14 @@ public class SOSClient extends Thread implements AutoCloseable {
 				.request(new MediaType[]{MediaType.APPLICATION_XML_TYPE})
 				.post(buildGetObservationRequest(startTime, endTime, observedProperties, procedures, featuresOfInterest));
 			returnStream = response.readEntity(InputStream.class);
-			os = new FileOutputStream(this.file);
-			IOUtils.copy(returnStream, os);
-		} catch (IOException ex) {
+			WaterML2Parser parser = new WaterML2Parser(returnStream);
+			ResultSet parse = parser.parse();
+			CachedResultSet.serialize(parse, this.file);
+		} catch (IOException | XMLStreamException | SQLException ex) {
 			log.error("Unable to get data from service", ex);
 		} finally {
 			numConnections--;
 			IOUtils.closeQuietly(returnStream);
-			IOUtils.closeQuietly(os);
 			fetched = true;
 		}
 	}

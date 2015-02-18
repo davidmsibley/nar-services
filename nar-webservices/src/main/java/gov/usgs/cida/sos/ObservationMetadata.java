@@ -74,6 +74,47 @@ public class ObservationMetadata {
 		return this;
 	}
 
+	/* Bean getters and setters, too fancy above */
+	public DateRange getTimePeriod() {
+		return timePeriod;
+	}
+
+	public void setTimePeriod(DateRange timePeriod) {
+		this.timePeriod = timePeriod;
+	}
+
+	public String getProcedure() {
+		return procedure;
+	}
+
+	public void setProcedure(String procedure) {
+		this.procedure = procedure;
+	}
+
+	public String getObservedProperty() {
+		return observedProperty;
+	}
+
+	public void setObservedProperty(String observedProperty) {
+		this.observedProperty = observedProperty;
+	}
+
+	public String getFeatureOfInterest() {
+		return featureOfInterest;
+	}
+
+	public void setFeatureOfInterest(String featureOfInterest) {
+		this.featureOfInterest = featureOfInterest;
+	}
+
+	public String getDefaultUnits() {
+		return defaultUnits;
+	}
+
+	public void setDefaultUnits(String defaultUnits) {
+		this.defaultUnits = defaultUnits;
+	}
+
 	@Override
 	public boolean equals(Object meta) {
 		if (meta == null) {

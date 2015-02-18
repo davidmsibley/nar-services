@@ -1,24 +1,16 @@
 package gov.usgs.cida.sos;
 
-import gov.usgs.cida.nude.column.Column;
-import gov.usgs.cida.nude.column.SimpleColumn;
-import gov.usgs.cida.nude.resultset.inmemory.TableRow;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import org.apache.commons.collections.BeanMap;
 import org.joda.time.DateTime;
-import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  *
  * @author Jordan Walker <jiwalker@usgs.gov>
  */
 public class Observation {
+
+	public ObservationMetadata getMetadata() {
+		return metadata;
+	}
 	
 	public static final String POINT_ELEMENT = "point";
 	public static final String TIME_ELEMENT = "time";
@@ -68,4 +60,25 @@ public class Observation {
 		return this;
 	}
 	
+	
+	/* Making into a bean for BeanUtils, should have never gotten too fancy */
+	public void setMetadata(ObservationMetadata metadata) {
+		this.metadata = metadata;
+	}
+
+	public DateTime getTime() {
+		return time;
+	}
+
+	public void setTime(DateTime time) {
+		this.time = time;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
 }
