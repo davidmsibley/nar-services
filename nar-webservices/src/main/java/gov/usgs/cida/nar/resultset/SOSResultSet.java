@@ -2,11 +2,15 @@ package gov.usgs.cida.nar.resultset;
 
 import gov.usgs.cida.nar.connector.SOSClient;
 import gov.usgs.cida.nude.column.ColumnGrouping;
+import gov.usgs.cida.nude.column.SimpleColumn;
 import gov.usgs.cida.nude.resultset.inmemory.TableRow;
+import gov.usgs.cida.sos.DataAvailabilityMember;
+import gov.usgs.cida.sos.DataAvailabilityMetadata;
 import gov.usgs.cida.sos.OrderedFilter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.SortedSet;
+import java.util.logging.Level;
 import javax.xml.stream.XMLStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +40,11 @@ public class SOSResultSet extends OGCResultSet {
 		super.close();
 	}
 	
-	private void nextFilter() throws XMLStreamException {
+	private void nextFilter() {
 		try {
 			currentFilteredResultSet.close();
 		} catch (SQLException ex) {
-			
+			log.debug("Exception closing result set", ex);
 		}
 		this.currentFilteredResultSet = this.client.readFile();
 		
@@ -53,18 +57,22 @@ public class SOSResultSet extends OGCResultSet {
 	
 	// TODO add row filtering to NUDE
 	private boolean filter(TableRow row) {
-//		if (row != null) {
-//			if (this.filter.procedure != null && !this.filter.procedure.equals(currentObservation.metadata().procedure())) {
-//				allEqual = false;
-//			}
-//			if (this.filter.observedProperty != null && !this.filter.observedProperty.equals(currentObservation.metadata().observedProperty())) {
-//				allEqual = false;
-//			}
-//			if (this.filter.featureOfInterest != null && !this.filter.featureOfInterest.equals(currentObservation.metadata().featureOfInterest())) {
-//				allEqual = false;
-//			}
-//		}
-		return true;
+		boolean allEqual = true;
+		if (row != null) {
+			if (this.currentFilter.procedure != null &&
+					!this.currentFilter.procedure.equals(row.getValue(new SimpleColumn(DataAvailabilityMetadata.PROCEDURE_ELEMENT)))) {
+				allEqual = false;
+			}
+			if (this.currentFilter.observedProperty != null &&
+					!this.currentFilter.observedProperty.equals(row.getValue(new SimpleColumn(DataAvailabilityMetadata.OBSERVED_PROPERTY_ELEMENT)))) {
+				allEqual = false;
+			}
+			if (this.currentFilter.featureOfInterest != null &&
+					!this.currentFilter.featureOfInterest.equals(row.getValue(new SimpleColumn(DataAvailabilityMetadata.FEATURE_OF_INTEREST_ELEMENT)))) {
+				allEqual = false;
+			}
+		}
+		return allEqual;
 	}
 	
 	@Override
@@ -72,43 +80,12 @@ public class SOSResultSet extends OGCResultSet {
 		TableRow row = null;
 		try {
 			if (currentFilteredResultSet != null && currentFilteredResultSet.next()) {
-			
 				TableRow inRow = TableRow.buildTableRow(currentFilteredResultSet);
-//			
-//			Map<Column, String> ob = new HashMap<>();
-//			for (Column col : columns) {
-//				String attribute = null;
-//				if (col.equals(SOSConnector.SOS_DATE_COL)) {
-//					attribute = next.time().toString();
-//				}
-//				else if (col.equals(SOSConnector.SOS_MOD_TYPE_COL)) {
-//					attribute = DownloadType.getModTypeFromProcedure(next.metadata().procedure());
-//				}
-//				else if (col.equals(SOSConnector.SOS_CONSTITUENT_COL)) {
-//					attribute = next.metadata().observedProperty();
-//				}
-//				else if (col.equals(SOSConnector.SOS_SITE_COL)) {
-//					attribute = next.metadata().featureOfInterest();
-//				}
-//				else {
-//					attribute = next.value();
-//				}
-//				ob.put(col, attribute);
-//			}
-//			
-//			row = new TableRow(columns, ob);
-
+				if (filter(inRow)) {
+					row = inRow;
+				}
 			} else {
-//			IOUtils.closeQuietly(currentFilteredResultSet);
-//			try {
-//				currentFilteredResultSet = nextCollection();
-//			}
-//			catch (XMLStreamException ex) {
-//				log.error("Error reading xml stream", ex);
-//			}
-//			if (currentFilteredResultSet != null) {
-//				row = makeNextRow();
-//			}
+				nextFilter();
 			}
 		} catch (SQLException ex) {
 			log.debug("Problem with resultset", ex);

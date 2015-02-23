@@ -9,7 +9,7 @@ package gov.usgs.cida.sos;
  * @author Jordan Walker <jiwalker@usgs.gov>
  */
 public class OrderedFilter implements Comparable<OrderedFilter>{
-
+	
 	public final String procedure;
 	public final String observedProperty;
 	public final String featureOfInterest;
