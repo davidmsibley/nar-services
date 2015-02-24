@@ -1,6 +1,8 @@
 package gov.usgs.cida.sos;
 
+import gov.usgs.cida.nude.resultset.inmemory.TableRow;
 import gov.usgs.cida.nude.time.DateRange;
+import gov.usgs.cida.nude.util.NudeUtils;
 import java.io.Closeable;
 import java.util.Iterator;
 import javax.xml.stream.XMLStreamConstants;
@@ -38,6 +40,27 @@ public class ObservationCollection implements Iterable, Iterator, Closeable {
 		}
 		inUse = true;
 		return this;
+	}
+	
+	public Iterator<TableRow> tableRowIterator() {
+		final ObservationCollection parent = this;
+		return new Iterator<TableRow>() {
+
+			@Override
+			public boolean hasNext() {
+				return parent.hasNext();
+			}
+
+			@Override
+			public TableRow next() {
+				return NudeUtils.makeTableRow(parent.next());
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Read-only");
+			}
+		};
 	}
 
 	@Override
@@ -197,4 +220,5 @@ public class ObservationCollection implements Iterable, Iterator, Closeable {
 			log.debug("Unable to close xml stream", ex);
 		}
 	}
+	
 }

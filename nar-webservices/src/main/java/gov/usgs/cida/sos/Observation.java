@@ -7,6 +7,10 @@ import org.joda.time.DateTime;
  * @author Jordan Walker <jiwalker@usgs.gov>
  */
 public class Observation {
+
+	public ObservationMetadata getMetadata() {
+		return metadata;
+	}
 	
 	public static final String POINT_ELEMENT = "point";
 	public static final String TIME_ELEMENT = "time";
@@ -56,4 +60,25 @@ public class Observation {
 		return this;
 	}
 	
+	
+	/* Making into a bean for BeanUtils, should have never gotten too fancy */
+	public void setMetadata(ObservationMetadata metadata) {
+		this.metadata = metadata;
+	}
+
+	public DateTime getTime() {
+		return time;
+	}
+
+	public void setTime(DateTime time) {
+		this.time = time;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

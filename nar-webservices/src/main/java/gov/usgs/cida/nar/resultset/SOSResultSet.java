@@ -5,18 +5,17 @@ import gov.usgs.cida.nar.connector.SOSConnector;
 import gov.usgs.cida.nar.service.DownloadType;
 import gov.usgs.cida.nude.column.Column;
 import gov.usgs.cida.nude.column.ColumnGrouping;
+import gov.usgs.cida.nude.column.SimpleColumn;
 import gov.usgs.cida.nude.resultset.inmemory.TableRow;
 import gov.usgs.cida.sos.Observation;
-import gov.usgs.cida.sos.ObservationCollection;
+import gov.usgs.cida.sos.ObservationMetadata;
 import gov.usgs.cida.sos.OrderedFilter;
-import gov.usgs.cida.sos.WaterML2Parser;
-import java.io.InputStream;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
-import javax.xml.stream.XMLStreamException;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,10 +27,14 @@ public class SOSResultSet extends OGCResultSet {
 	
 	private static final Logger log = LoggerFactory.getLogger(SOSResultSet.class);
 	
+	private static final Column PROCEDURE_IN_COL = new SimpleColumn(ObservationMetadata.PROCEDURE_ELEMENT);
+	private static final Column OBSERVED_PROPERTY_IN_COL = new SimpleColumn(ObservationMetadata.OBSERVED_PROPERTY_ELEMENT);
+	private static final Column FEATURE_OF_INTEREST_IN_COL = new SimpleColumn(ObservationMetadata.FEATURE_OF_INTEREST_ELEMENT);
+	
 	private SortedSet<OrderedFilter> filters;
 	private SOSClient client;
-	private ObservationCollection currentCollection;
-	private InputStream sourceStream;
+	private ResultSet currentFilteredResultSet;
+	private OrderedFilter currentFilter;
 
 	public SOSResultSet(SortedSet<OrderedFilter> filters, SOSClient client, ColumnGrouping colGroups) {
 		this.filters = filters;
@@ -41,62 +44,92 @@ public class SOSResultSet extends OGCResultSet {
 
 	@Override
 	public void close() throws SQLException {
-		IOUtils.closeQuietly(currentCollection);
-		IOUtils.closeQuietly(sourceStream);
+		currentFilteredResultSet.close();
 		super.close();
 	}
 	
-	private ObservationCollection nextCollection() throws XMLStreamException {
-		ObservationCollection collection = null;
-		sourceStream = this.client.readFile();
-		WaterML2Parser parser = new WaterML2Parser(sourceStream);
+	private boolean nextFilter() {
+		boolean hasNext = false;
+		try {
+			if (currentFilteredResultSet != null) {
+				currentFilteredResultSet.close();
+			}
+		} catch (SQLException ex) {
+			log.debug("Exception closing result set", ex);
+		}
+		this.currentFilteredResultSet = this.client.readFile();
+		
 		if (filters.size() > 0) {
 			OrderedFilter first = filters.first();
 			filters.remove(first);
-			collection = parser.getFilteredObservations(first);
+			currentFilter = first;
+			hasNext = true;
 		}
-		return collection;
+		return hasNext;
 	}
-
+	
+	// TODO add row filtering to NUDE
+	private boolean filter(TableRow row) {
+		boolean allEqual = true;
+		if (row != null) {
+			if (this.currentFilter.procedure != null &&
+					!this.currentFilter.procedure.equals(row.getValue(PROCEDURE_IN_COL))) {
+				allEqual = false;
+			}
+			if (this.currentFilter.observedProperty != null &&
+					!this.currentFilter.observedProperty.equals(row.getValue(OBSERVED_PROPERTY_IN_COL))) {
+				allEqual = false;
+			}
+			if (this.currentFilter.featureOfInterest != null &&
+					!this.currentFilter.featureOfInterest.equals(row.getValue(FEATURE_OF_INTEREST_IN_COL))) {
+				allEqual = false;
+			}
+		}
+		return allEqual;
+	}
+	
 	@Override
 	protected TableRow makeNextRow() {
 		TableRow row = null;
-		if (currentCollection != null && currentCollection.hasNext()) {
-			Observation next = currentCollection.next();
-			Map<Column, String> ob = new HashMap<>();
-			for (Column col : columns) {
-				String attribute = null;
-				if (col.equals(SOSConnector.SOS_DATE_COL)) {
-					attribute = next.time().toString();
+		try {
+			TableRow inRow = null;
+			boolean hasNextFilter = true;
+			while (row == null && hasNextFilter) {
+				if (currentFilteredResultSet == null || currentFilteredResultSet.isAfterLast()) {
+					hasNextFilter = nextFilter();
 				}
-				else if (col.equals(SOSConnector.SOS_MOD_TYPE_COL)) {
-					attribute = DownloadType.getModTypeFromProcedure(next.metadata().procedure());
+
+				while (currentFilteredResultSet.next() && row == null) {
+					inRow = TableRow.buildTableRow(currentFilteredResultSet);
+					if (filter(inRow)) {
+						Map<Column, String> resultMap = new HashMap<>();
+						for (Column col : columns) {
+							String attribute = null;
+							if (col.equals(SOSConnector.SOS_DATE_COL)) {
+								attribute = inRow.getValue(new SimpleColumn(Observation.TIME_ELEMENT));
+							}
+							else if (col.equals(SOSConnector.SOS_MOD_TYPE_COL)) {
+								String procedure = inRow.getValue(new SimpleColumn(ObservationMetadata.PROCEDURE_ELEMENT));
+								attribute = DownloadType.getModTypeFromProcedure(procedure);
+							}
+							else if (col.equals(SOSConnector.SOS_CONSTITUENT_COL)) {
+								attribute = inRow.getValue(new SimpleColumn(ObservationMetadata.OBSERVED_PROPERTY_ELEMENT));
+							}
+							else if (col.equals(SOSConnector.SOS_SITE_COL)) {
+								attribute = inRow.getValue(new SimpleColumn(ObservationMetadata.FEATURE_OF_INTEREST_ELEMENT));
+							}
+							else {
+								attribute = inRow.getValue(new SimpleColumn(Observation.VALUE_ELEMENT));
+							}
+							resultMap.put(col, attribute);
+						}
+						row = new TableRow(columns, resultMap);
+					}
 				}
-				else if (col.equals(SOSConnector.SOS_CONSTITUENT_COL)) {
-					attribute = next.metadata().observedProperty();
-				}
-				else if (col.equals(SOSConnector.SOS_SITE_COL)) {
-					attribute = next.metadata().featureOfInterest();
-				}
-				else {
-					attribute = next.value();
-				}
-				ob.put(col, attribute);
+				
 			}
-			
-			row = new TableRow(columns, ob);
-		} else {
-			IOUtils.closeQuietly(currentCollection);
-			IOUtils.closeQuietly(sourceStream);
-			try {
-				currentCollection = nextCollection();
-			}
-			catch (XMLStreamException ex) {
-				log.error("Error reading xml stream", ex);
-			}
-			if (currentCollection != null) {
-				row = makeNextRow();
-			}
+		} catch (SQLException ex) {
+			log.debug("Problem with resultset", ex);
 		}
 		return row;
 	}
