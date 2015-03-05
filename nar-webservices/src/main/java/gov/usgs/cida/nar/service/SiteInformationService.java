@@ -291,8 +291,9 @@ public class SiteInformationService {
 			SimpleFeatureIterator iter = features.features();
 			while(iter.hasNext()) {
 				SimpleFeature siteFeature = iter.next();
-				String site = siteFeature.getAttribute(WFSConnector.WFS_MS_SITE_COL_NAME).toString();
-				if(site.equals(MS_SITE_VAL)) {
+				Object attribute = siteFeature.getAttribute(WFSConnector.WFS_MS_SITE_COL_NAME);
+				String site = null == attribute ? "" : attribute.toString();
+				if(MS_SITE_VAL.equals(site)) {
 					result = true;
 					break;
 				}
