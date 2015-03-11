@@ -12,7 +12,6 @@ import gov.usgs.cida.sos.ObservationMetadata;
 import gov.usgs.cida.sos.OrderedFilter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -93,13 +92,13 @@ public class SOSResultSet extends OGCResultSet {
 		TableRow row = null;
 		try {
 			TableRow inRow = null;
-			boolean hasNextFilter = true;
-			while (row == null && hasNextFilter) {
+			boolean hasFilter = true;
+			while (row == null && hasFilter) {
 				if (currentFilteredResultSet == null || currentFilteredResultSet.isAfterLast()) {
-					hasNextFilter = nextFilter();
+					hasFilter = nextFilter();
 				}
 
-				while (currentFilteredResultSet.next() && row == null) {
+				while (currentFilteredResultSet.next() && row == null && hasFilter) {
 					inRow = TableRow.buildTableRow(currentFilteredResultSet);
 					if (filter(inRow)) {
 						Map<Column, String> resultMap = new HashMap<>();

@@ -6,6 +6,7 @@ import gov.usgs.cida.nude.column.ColumnGrouping;
 import gov.usgs.cida.nude.column.SimpleColumn;
 import gov.usgs.cida.nude.resultset.inmemory.PeekingResultSet;
 import gov.usgs.cida.nude.resultset.inmemory.TableRow;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -83,6 +84,9 @@ public class CachedResultSet extends PeekingResultSet {
 			if (obj instanceof TableRow) {
 				row = (TableRow)obj;
 			}
+		} catch (EOFException e) {
+			// Done
+			row = null;
 		} catch (ClassNotFoundException | IOException e) {
 			log.debug(e.getMessage(), e);
 		}
@@ -106,9 +110,14 @@ public class CachedResultSet extends PeekingResultSet {
 				throw new ClassCastException("Object read is not of correct type");
 			}
 		}
+		catch (EOFException ex) {
+			log.debug("No metadata for resultset, making empty metadata");
+			result = new CGResultSetMetaData(new ColumnGrouping(new LinkedList<Column>()));
+		}
 		catch (IOException | ClassNotFoundException ex) {
 			log.error(ex.getMessage(), ex);
 		}
+
 		return result;
 	}
 
