@@ -25,6 +25,6 @@
         <appender-ref ref="file"/>
     </root>
     
-    <logger name="org.apache.http.wire" level="DEBUG" />
+    <logger name="org.apache.http.wire" level="INFO" />
 	<logger name="gov.usgs.cida.nude.resultset.inmemory" level="ERROR" />
 </configuration>
