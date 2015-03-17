@@ -25,7 +25,7 @@
         <appender-ref ref="file"/>
     </root>
     
-    <logger name="org.apache.http.wire" level="INFO" />
-	<logger name="org.apache.commons.beanutils.converters" level="ERROR" />
+    <logger name="org.apache.http" level="INFO" />
+	<logger name="org.apache.commons.beanutils" level="ERROR" />
 	<logger name="gov.usgs.cida.nude.resultset.inmemory" level="ERROR" />
 </configuration>
