@@ -2,6 +2,7 @@ package gov.usgs.cida.nar.connector;
 
 import gov.usgs.cida.nar.resultset.SOSResultSet;
 import gov.usgs.cida.nar.transform.PlainStringNumberTransform;
+import gov.usgs.cida.nar.util.Profiler;
 import gov.usgs.cida.nude.column.Column;
 import gov.usgs.cida.nude.column.ColumnGrouping;
 import gov.usgs.cida.nude.column.SimpleColumn;
@@ -18,6 +19,7 @@ import java.sql.ResultSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -48,6 +50,7 @@ public class SOSConnector implements IConnector, Closeable {
 	
 	private boolean isReady;
 
+	private UUID timer;
 
 	public SOSConnector(SOSClient client, SortedSet<OrderedFilter> filters, String valueColumnName) {
 		this.client = client;
@@ -153,6 +156,7 @@ public class SOSConnector implements IConnector, Closeable {
 			client.start();
 		} else if (client.getState() == Thread.State.TERMINATED) {
 			this.isReady = true;
+			timer = Profiler.startTimer();
 		}
 		
 		return this.isReady;
@@ -178,6 +182,8 @@ public class SOSConnector implements IConnector, Closeable {
 	@Override
 	public void close() {
 		client.close();
+		long mergeTime = Profiler.stopTimer(timer);
+		Profiler.log.debug("Time taken to merge sos stream {} milliseconds", mergeTime);
 	}
 
 }

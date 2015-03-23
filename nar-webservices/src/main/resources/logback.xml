@@ -1,31 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss} %p %c{1}: %m%n</pattern>
-        </encoder>
-    </appender>
-    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${catalina.base}/logs/nar-webservices/nar-webservices.log</File>
-        <encoder>
-            <pattern>%d{HH:mm:ss} %p %c{1}: %m%n</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${catalina.base}/logs/nar-webservices/nar-webservices.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <timeBasedFileNamingAndTriggeringPolicy
-            class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-            <maxFileSize>100MB</maxFileSize>
-        </timeBasedFileNamingAndTriggeringPolicy>
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss} %p %c{1}: %m%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${catalina.base}/logs/nar-webservices/nar-webservices.log</File>
+		<encoder>
+			<pattern>%d{HH:mm:ss} %p %c{1}: %m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${catalina.base}/logs/nar-webservices/nar-webservices.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<timeBasedFileNamingAndTriggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+			<maxFileSize>100MB</maxFileSize>
+		</timeBasedFileNamingAndTriggeringPolicy>
 
-    </appender>
-    <root level="DEBUG">
-        <appender-ref ref="stdout"/>
-        <appender-ref ref="file"/>
-    </root>
-    
-    <logger name="org.apache.http.wire" level="INFO" />
-	<logger name="org.apache.commons.beanutils.converters" level="ERROR" />
+	</appender>
+	<appender name="profile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${catalina.base}/logs/nar-webservices/nar-webservices-profile.log</File>
+		<encoder>
+			<pattern>%d{HH:mm:ss} %p %c{1}: %m%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${catalina.base}/logs/nar-webservices/nar-webservices.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<timeBasedFileNamingAndTriggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+			<maxFileSize>100MB</maxFileSize>
+		</timeBasedFileNamingAndTriggeringPolicy>
+	</appender>
+	<root level="DEBUG">
+		<appender-ref ref="stdout"/>
+		<appender-ref ref="file"/>
+	</root>
+	
+	<logger name="download-profiler" level="DEBUG" >
+		<appender-ref ref="profile"/>
+	</logger>
+	<logger name="org.apache.http" level="INFO" />
+	<logger name="org.apache.commons.beanutils" level="ERROR" />
 	<logger name="gov.usgs.cida.nude.resultset.inmemory" level="ERROR" />
 </configuration>
