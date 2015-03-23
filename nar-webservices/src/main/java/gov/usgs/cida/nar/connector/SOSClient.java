@@ -1,6 +1,7 @@
 package gov.usgs.cida.nar.connector;
 
 import gov.usgs.cida.nar.resultset.CachedResultSet;
+import gov.usgs.cida.nar.util.Profiler;
 import gov.usgs.cida.sos.DataAvailabilityMember;
 import gov.usgs.cida.sos.EndOfXmlStreamException;
 import gov.usgs.cida.sos.WaterML2Parser;
@@ -128,14 +129,21 @@ public class SOSClient extends Thread implements AutoCloseable {
 				}
 			}
 			numConnections++;
+			UUID timerId = Profiler.startTimer();
 			Response response = client.target(this.sosEndpoint)
 				.path("")
 				.request(new MediaType[]{MediaType.APPLICATION_XML_TYPE})
 				.post(buildGetObservationRequest(startTime, endTime, observedProperties, procedures, featuresOfInterest));
 			returnStream = response.readEntity(InputStream.class);
 			WaterML2Parser parser = new WaterML2Parser(returnStream);
+			long sosTime = Profiler.stopTimer(timerId);
+			Profiler.log.debug("SOS GetObservations took {} milliseconds", sosTime);
+			
+			timerId = Profiler.startTimer();
 			ResultSet parse = parser.parse();
 			CachedResultSet.serialize(parse, this.file);
+			long parseTime = Profiler.stopTimer(timerId);
+			Profiler.log.debug("Parsing SOS took {} milliseconds", parseTime);
 		} catch (IOException | XMLStreamException | SQLException ex) {
 			log.error("Unable to get data from service", ex);
 		} finally {
