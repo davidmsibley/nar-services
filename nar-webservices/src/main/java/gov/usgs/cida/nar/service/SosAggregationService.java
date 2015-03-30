@@ -234,7 +234,7 @@ public class SosAggregationService {
 				break;
 			default: //nothing
 		}
-		
+		steps.add(getLeadingZeroIdExcelFixTransform(steps));
 		Plan plan = new Plan(steps);
 		
 		ResultSet runStep = Plan.runPlan(plan);
@@ -335,8 +335,6 @@ public class SosAggregationService {
 		return filteredStationIds;
 	}
     private PlanStep getLeadingZeroIdExcelFixTransform(final List<PlanStep> prevSteps) {
-
-	//rename columns to specified headers
 	ColumnGrouping originals = prevSteps.get(prevSteps.size() - 1).getExpectedColumns();
 
 	FilterStep leadingZeroIdExcelFixStep = new FilterStep(new NudeFilterBuilder(originals)
