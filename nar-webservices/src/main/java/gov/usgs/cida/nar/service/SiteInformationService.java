@@ -1,8 +1,6 @@
 package gov.usgs.cida.nar.service;
 
 import gov.usgs.cida.nar.connector.WFSConnector;
-import static gov.usgs.cida.nar.service.SosAggregationService.SITE_FLOW_ID_IN_COL;
-import static gov.usgs.cida.nar.service.SosAggregationService.SITE_QW_ID_IN_COL;
 import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepper;
 import gov.usgs.cida.nar.util.DescriptionLoaderSingleton;
 import gov.usgs.cida.nar.util.JNDISingleton;
