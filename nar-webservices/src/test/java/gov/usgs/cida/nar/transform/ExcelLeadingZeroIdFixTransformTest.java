@@ -139,8 +139,8 @@ public class ExcelLeadingZeroIdFixTransformTest {
 	ResultSet in = new IteratorWrappingResultSet(inputSampleDataset.iterator());
 	ResultSet actual = new NudeFilterBuilder(inputColumns)
 		.addFilterStage(new FilterStageBuilder(inputColumns)
-			.addTransform(QW_ID_COLUMN, new WaterYearTransform(QW_ID_COLUMN))
-			.addTransform(FLOW_ID_COLUMN, new WaterYearTransform(FLOW_ID_COLUMN))
+			.addTransform(QW_ID_COLUMN, new ExcelLeadingZeroIdFixTransform(QW_ID_COLUMN))
+			.addTransform(FLOW_ID_COLUMN, new ExcelLeadingZeroIdFixTransform(FLOW_ID_COLUMN))
 			.buildFilterStage())
 		.buildFilter().filter(in);
 	assertTrue(ResultSetUtils.checkEqualRows(expected, actual));
