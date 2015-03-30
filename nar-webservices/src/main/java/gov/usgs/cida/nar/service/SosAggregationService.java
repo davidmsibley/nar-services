@@ -2,6 +2,7 @@ package gov.usgs.cida.nar.service;
 
 import gov.usgs.cida.nar.connector.SOSClient;
 import gov.usgs.cida.nar.connector.SOSConnector;
+import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepper;
 import gov.usgs.cida.nar.transform.ExcelLeadingZeroIdFixTransform;
 import gov.usgs.cida.nar.transform.FourDigitYearTransform;
 import gov.usgs.cida.nar.transform.PrefixStripTransform;
@@ -335,16 +336,7 @@ public class SosAggregationService {
 		return filteredStationIds;
 	}
     private PlanStep getLeadingZeroIdExcelFixTransform(final List<PlanStep> prevSteps) {
-	ColumnGrouping originals = prevSteps.get(prevSteps.size() - 1).getExpectedColumns();
-
-	FilterStep leadingZeroIdExcelFixStep = new FilterStep(new NudeFilterBuilder(originals)
-		.addFilterStage(new FilterStageBuilder(originals)
-			.addTransform(new SimpleColumn(SITE_FLOW_ID_IN_COL), new ExcelLeadingZeroIdFixTransform(originals.get(indexOfCol(originals.getColumns(), SITE_FLOW_ID_IN_COL))))
-			.addTransform(new SimpleColumn(SITE_QW_ID_IN_COL), new ExcelLeadingZeroIdFixTransform(originals.get(indexOfCol(originals.getColumns(), SITE_QW_ID_IN_COL))))
-			.buildFilterStage())
-		.buildFilter());
-
-	return leadingZeroIdExcelFixStep;
+	return FixLeadingZeroIdInExcelStepper.step(prevSteps, SITE_FLOW_ID_IN_COL,SITE_QW_ID_IN_COL);
     }
 	private List<PlanStep> getAnnualLoadSteps(final List<PlanStep> prevSteps) {
 		List<PlanStep> steps = new ArrayList<>();
