@@ -1,6 +1,7 @@
 package gov.usgs.cida.nar.service;
 
 import gov.usgs.cida.nar.connector.WFSConnector;
+import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepBuilder;
 import gov.usgs.cida.nar.util.DescriptionLoaderSingleton;
 import gov.usgs.cida.nar.util.JNDISingleton;
 import gov.usgs.cida.nude.column.Column;
@@ -103,7 +104,7 @@ public class SiteInformationService {
 							.buildFilterStage())
 				.buildFilter());
 		steps.add(renameFilterStep);
-
+		steps.add(getLeadingZeroIdExcelFixTransform(steps));
 		//remove FID and all old column names
 		List<Column> wrapped = renameFilterStep.getExpectedColumns().getColumns();
 		ColumnGrouping removed = new ColumnGrouping(wrapped.subList(9, wrapped.size()));
@@ -301,5 +302,9 @@ public class SiteInformationService {
 		}
 		
 		return result;
+	}
+	
+	private PlanStep getLeadingZeroIdExcelFixTransform(final List<PlanStep> prevSteps) {
+	    return FixLeadingZeroIdInExcelStepBuilder.build(prevSteps, SITE_FLOW_ID_OUT_COL,SITE_QW_ID_OUT_COL);
 	}
  }

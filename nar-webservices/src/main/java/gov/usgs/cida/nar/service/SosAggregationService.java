@@ -2,6 +2,7 @@ package gov.usgs.cida.nar.service;
 
 import gov.usgs.cida.nar.connector.SOSClient;
 import gov.usgs.cida.nar.connector.SOSConnector;
+import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepBuilder;
 import gov.usgs.cida.nar.transform.FourDigitYearTransform;
 import gov.usgs.cida.nar.transform.PrefixStripTransform;
 import gov.usgs.cida.nar.transform.QwIdToFlowIdTransform;
@@ -58,48 +59,48 @@ public class SosAggregationService {
 	//a higher wait time also helps with keeping output streams active by slowly streaming out bytes
 	private static final int WAIT_TIME_BETWEEN_SOS_REQUESTS = 1000; 
 
-	private static final String DATE_IN_COL = "DATE";
+	public static final String DATE_IN_COL = "DATE";
 	
-	private static final String SITE_QW_ID_IN_COL = "SITE_QW_ID";
-	private static final String SITE_FLOW_ID_IN_COL = "SITE_FLOW_ID";
+	public static final String SITE_QW_ID_IN_COL = "SITE_QW_ID";
+	public static final String SITE_FLOW_ID_IN_COL = "SITE_FLOW_ID";
 
-	private static final String QW_CONSTIT_IN_COL = "CONSTIT";
-	private static final String QW_CONCENTRATION_IN_COL = "procedure"; 
+	public static final String QW_CONSTIT_IN_COL = "CONSTIT";
+	public static final String QW_CONCENTRATION_IN_COL = "procedure"; 
 
-	private static final String FLOW_IN_COL = "procedure"; 
+	public static final String FLOW_IN_COL = "procedure"; 
 	
-	private static final String AN_MASS_UPPER_95_IN_COL = "annual_mass_upper_95";
-	private static final String AN_MASS_LOWER_95_IN_COL = "annual_mass_lower_95";
-	private static final String AN_MASS_IN_COL = "annual_mass";
-	private static final String AN_YIELD_IN_COL = "annual_yield";
-	private static final String AN_CONC_FLOW_WEIGHTED_IN_COL = "annual_concentration_flow_weighted";
+	public static final String AN_MASS_UPPER_95_IN_COL = "annual_mass_upper_95";
+	public static final String AN_MASS_LOWER_95_IN_COL = "annual_mass_lower_95";
+	public static final String AN_MASS_IN_COL = "annual_mass";
+	public static final String AN_YIELD_IN_COL = "annual_yield";
+	public static final String AN_CONC_FLOW_WEIGHTED_IN_COL = "annual_concentration_flow_weighted";
 	
-	private static final String MON_MASS_UPPER_95_IN_COL = "monthly_mass_upper_95";
-	private static final String MON_MASS_IN_COL = "monthly_mass";
-	private static final String MON_FLOW_IN_COL = "procedure";
-	private static final String MON_MASS_LOWER_95_IN_COL= "monthly_mass_lower_95";
+	public static final String MON_MASS_UPPER_95_IN_COL = "monthly_mass_upper_95";
+	public static final String MON_MASS_IN_COL = "monthly_mass";
+	public static final String MON_FLOW_IN_COL = "procedure";
+	public static final String MON_MASS_LOWER_95_IN_COL= "monthly_mass_lower_95";
 	
-	private static final String WY_OUT_COL = "WY";
-	private static final String FLOW_OUT_COL = "FLOW";
+	public static final String WY_OUT_COL = "WY";
+	public static final String FLOW_OUT_COL = "FLOW";
 
-	private static final String QW_CONCENTRATION_OUT_COL = "CONCENTRATION"; 
-	private static final String MOD_TYPE_OUT_COL = "MODTYPE"; 
-	private static final String REMARK_OUT_COL = "REMARK";
+	public static final String QW_CONCENTRATION_OUT_COL = "CONCENTRATION"; 
+	public static final String MOD_TYPE_OUT_COL = "MODTYPE"; 
+	public static final String REMARK_OUT_COL = "REMARK";
 
-	private static final String AN_MASS_UPPER_95_OUT_COL = "TONS_U95";
-	private static final String AN_MASS_LOWER_95_OUT_COL = "TONS_L95";
-	private static final String AN_MASS_OUT_COL = "TONS_LOAD";
-	private static final String AN_YIELD_OUT_COL = "YIELD";
-	private static final String AN_CONC_FLOW_WEIGHTED_OUT_COL = "FWC";
+	public static final String AN_MASS_UPPER_95_OUT_COL = "TONS_U95";
+	public static final String AN_MASS_LOWER_95_OUT_COL = "TONS_L95";
+	public static final String AN_MASS_OUT_COL = "TONS_LOAD";
+	public static final String AN_YIELD_OUT_COL = "YIELD";
+	public static final String AN_CONC_FLOW_WEIGHTED_OUT_COL = "FWC";
 
-	private static final String MON_MASS_UPPER_95_OUT_COL = "TONS_U95";
-	private static final String MON_MASS_OUT_COL = "TONS_LOAD";
-	private static final String MON_FLOW_OUT_COL = "FLOW";
-	private static final String MON_MASS_LOWER_95_OUT_COL= "TONS_L95";
+	public static final String MON_MASS_UPPER_95_OUT_COL = "TONS_U95";
+	public static final String MON_MASS_OUT_COL = "TONS_LOAD";
+	public static final String MON_FLOW_OUT_COL = "FLOW";
+	public static final String MON_MASS_LOWER_95_OUT_COL= "TONS_L95";
 	
-	private static final String MONTH_OUT_COL= "MONTH";
+	public static final String MONTH_OUT_COL= "MONTH";
 	
-	private static final String PROPERTY_PREFIX = "http://cida.usgs.gov/def/NAR/property/";
+	public static final String PROPERTY_PREFIX = "http://cida.usgs.gov/def/NAR/property/";
 	
 	private DownloadType type;
 	private String sosUrl;
@@ -233,7 +234,7 @@ public class SosAggregationService {
 				break;
 			default: //nothing
 		}
-		
+		steps.add(getLeadingZeroIdExcelFixTransform(steps));
 		Plan plan = new Plan(steps);
 		
 		ResultSet runStep = Plan.runPlan(plan);
@@ -333,7 +334,9 @@ public class SosAggregationService {
 		
 		return filteredStationIds;
 	}
-	
+    private PlanStep getLeadingZeroIdExcelFixTransform(final List<PlanStep> prevSteps) {
+	return FixLeadingZeroIdInExcelStepBuilder.build(prevSteps, SITE_FLOW_ID_IN_COL,SITE_QW_ID_IN_COL);
+    }
 	private List<PlanStep> getAnnualLoadSteps(final List<PlanStep> prevSteps) {
 		List<PlanStep> steps = new ArrayList<>();
 		
