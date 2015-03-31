@@ -8,8 +8,8 @@ import gov.usgs.cida.nude.filter.NudeFilterBuilder;
 import gov.usgs.cida.nude.plan.PlanStep;
 import java.util.List;
 
-public class FixLeadingZeroIdInExcelStepper {
-    public static PlanStep step(final List<PlanStep> prevSteps, final String SITE_FLOW_ID_COL_NAME, final String SITE_QW_ID_COL_NAME) {
+public class FixLeadingZeroIdInExcelStepBuilder {
+    public static PlanStep build(final List<PlanStep> prevSteps, final String SITE_FLOW_ID_COL_NAME, final String SITE_QW_ID_COL_NAME) {
 	ColumnGrouping originals = prevSteps.get(prevSteps.size() - 1).getExpectedColumns();
 
 	FilterStep leadingZeroIdExcelFixStep = new FilterStep(new NudeFilterBuilder(originals)

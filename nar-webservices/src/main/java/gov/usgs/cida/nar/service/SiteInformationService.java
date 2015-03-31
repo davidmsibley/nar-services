@@ -1,7 +1,7 @@
 package gov.usgs.cida.nar.service;
 
 import gov.usgs.cida.nar.connector.WFSConnector;
-import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepper;
+import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepBuilder;
 import gov.usgs.cida.nar.util.DescriptionLoaderSingleton;
 import gov.usgs.cida.nar.util.JNDISingleton;
 import gov.usgs.cida.nude.column.Column;
@@ -305,6 +305,6 @@ public class SiteInformationService {
 	}
 	
 	private PlanStep getLeadingZeroIdExcelFixTransform(final List<PlanStep> prevSteps) {
-	    return FixLeadingZeroIdInExcelStepper.step(prevSteps, SITE_FLOW_ID_OUT_COL,SITE_QW_ID_OUT_COL);
+	    return FixLeadingZeroIdInExcelStepBuilder.build(prevSteps, SITE_FLOW_ID_OUT_COL,SITE_QW_ID_OUT_COL);
 	}
  }

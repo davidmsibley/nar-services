@@ -2,7 +2,7 @@ package gov.usgs.cida.nar.service;
 
 import gov.usgs.cida.nar.connector.SOSClient;
 import gov.usgs.cida.nar.connector.SOSConnector;
-import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepper;
+import gov.usgs.cida.nar.service.plan.FixLeadingZeroIdInExcelStepBuilder;
 import gov.usgs.cida.nar.transform.FourDigitYearTransform;
 import gov.usgs.cida.nar.transform.PrefixStripTransform;
 import gov.usgs.cida.nar.transform.QwIdToFlowIdTransform;
@@ -335,7 +335,7 @@ public class SosAggregationService {
 		return filteredStationIds;
 	}
     private PlanStep getLeadingZeroIdExcelFixTransform(final List<PlanStep> prevSteps) {
-	return FixLeadingZeroIdInExcelStepper.step(prevSteps, SITE_FLOW_ID_IN_COL,SITE_QW_ID_IN_COL);
+	return FixLeadingZeroIdInExcelStepBuilder.build(prevSteps, SITE_FLOW_ID_IN_COL,SITE_QW_ID_IN_COL);
     }
 	private List<PlanStep> getAnnualLoadSteps(final List<PlanStep> prevSteps) {
 		List<PlanStep> steps = new ArrayList<>();
