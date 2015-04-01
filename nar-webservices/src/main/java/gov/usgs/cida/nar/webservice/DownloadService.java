@@ -38,7 +38,7 @@ public class DownloadService {
 	private static final String SOS_URL_JNDI_NAME = "nar.endpoint.sos";
 	//This list is needed to mimic the "get all" when no constituents are chosen from the front end
 	private static final List<String> CONSTITUENT_LIST = Arrays.asList(
-			"NH3", "NO23", "OP", "SI", "SSC", "TN", "TP"
+			"NO23", "SSC", "TN", "TP"
 			);
 	private static final String FLOW_CONSTITUENT = "Q";
 	private static final String NEWLINE_CHAR = "\r\n";
