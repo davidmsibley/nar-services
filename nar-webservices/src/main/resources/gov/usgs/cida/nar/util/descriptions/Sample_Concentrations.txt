@@ -2,8 +2,8 @@
 #
 #SITE_QW_ID USGS station identifier for water-quality sampling
 #SITE_FLOW_ID USGS or other agency station identifier for streamflow measurement
-#"CONSTIT Abbreviation indicating constituent type.  Values include NO23, nitrate plus nitrite as N; TN, total nitrogen as N; TP, total phosphorus as P; SSC, suspended-sediment concentration"
-#DATE Date
-#WY Water year (10/1 through 9/30)
-#"CONCENTRATION Concentration, in milligrams per liter"
-#"REMARK Water-quality remark.  This value is "<" if data are censored to the laboratory reporting level, or blank if they are not"
+#CONSTIT Abbreviation indicating constituent type.  Values include NO23: nitrate plus nitrite as N; TN: total nitrogen as N; TP: total phosphorus as P; SSC: suspended-sediment concentration
+#DATE  Date
+#WY Water year
+#CONCENTRATION Concentration in milligrams per liter
+#REMARK Water-quality remark.  This value is “<” if data are censored to the laboratory reporting level or blank if they are not
