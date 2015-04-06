@@ -202,7 +202,7 @@ public class SiteInformationService {
 			log.error("Could not set up wfs connector", ex);
 		}
 		try {
-			stationIds = getStationIdsFromFeatureCollectoin(getStationFeatures(siteType, stationId, state));
+			stationIds = getStationIdsFromFeatureCollection(getStationFeatures(siteType, stationId, state));
 		} finally {
 			try {
 				client.close();
@@ -213,7 +213,7 @@ public class SiteInformationService {
 		return stationIds;
 	}
 	
-	public static List<String> getStationIdsFromFeatureCollectoin(SimpleFeatureCollection features) throws IOException {
+	public static List<String> getStationIdsFromFeatureCollection(SimpleFeatureCollection features) throws IOException {
 		List<String> stationIds = new ArrayList<>();
 		
 		SimpleFeatureIterator iter = features.features();

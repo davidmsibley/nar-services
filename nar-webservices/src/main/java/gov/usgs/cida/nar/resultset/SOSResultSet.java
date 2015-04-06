@@ -50,6 +50,7 @@ public class SOSResultSet extends OGCResultSet {
 	}
 	
 	private boolean nextFilter() {
+		log.debug("next Filter");
 		boolean hasNext = false;
 		try {
 			if (currentFilteredResultSet != null) {
@@ -65,6 +66,8 @@ public class SOSResultSet extends OGCResultSet {
 			filters.remove(first);
 			currentFilter = first;
 			hasNext = true;
+		} else {
+			currentFilter = null;
 		}
 		return hasNext;
 	}
@@ -91,16 +94,20 @@ public class SOSResultSet extends OGCResultSet {
 	
 	@Override
 	protected TableRow makeNextRow() {
+		log.debug("makeNextRow");
 		TableRow row = null;
 		try {
 			TableRow inRow = null;
-			boolean hasFilter = true;
+			boolean hasFilter = (null != currentFilter || !filters.isEmpty());
 			while (row == null && hasFilter) {
+				log.debug("firstWhile");
 				if (currentFilteredResultSet == null || currentFilteredResultSet.isAfterLast()) {
+					log.debug("filterIf");
 					hasFilter = nextFilter();
 				}
 
 				while (row == null && hasFilter && currentFilteredResultSet.next()) {
+					log.debug("innerWhile");
 					inRow = TableRow.buildTableRow(currentFilteredResultSet);
 					if (filter(inRow)) {
 						log.debug("  filtered {} {} {} {} {}", inRow.getValue(new SimpleColumn(Observation.TIME_ELEMENT)), this.uuid, this.filters.size(), inRow.getValue(new SimpleColumn(ObservationMetadata.PROCEDURE_ELEMENT)), inRow.getValue(new SimpleColumn(ObservationMetadata.OBSERVED_PROPERTY_ELEMENT)));

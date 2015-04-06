@@ -102,9 +102,9 @@ public class SosAggregationService {
 	
 	public static final String PROPERTY_PREFIX = "http://cida.usgs.gov/def/NAR/property/";
 	
-	private DownloadType type;
-	private String sosUrl;
-	private String observedPropertyPrefix;
+	private final DownloadType type;
+	private final String sosUrl;
+	private final String observedPropertyPrefix;
 	private final SimpleFeatureCollection siteFeatures;
 	
 	public SosAggregationService(DownloadType type, String sosUrl, String observedPropertyPrefix, SimpleFeatureCollection siteFeatures) {
@@ -127,7 +127,7 @@ public class SosAggregationService {
 		final List<SOSConnector> sosConnectors = getSosConnectors(
 				sosUrl,
 				constituent,
-				SiteInformationService.getStationIdsFromFeatureCollectoin(siteFeatures),
+				SiteInformationService.getStationIdsFromFeatureCollection(siteFeatures),
 				startDateTime,
 				endDateTime);
 		
