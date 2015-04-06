@@ -98,7 +98,7 @@ public class SOSResultSet extends OGCResultSet {
 					hasFilter = nextFilter();
 				}
 
-				while (currentFilteredResultSet.next() && row == null && hasFilter) {
+				while (row == null && hasFilter && currentFilteredResultSet.next()) {
 					inRow = TableRow.buildTableRow(currentFilteredResultSet);
 					if (filter(inRow)) {
 						Map<Column, String> resultMap = new HashMap<>();
