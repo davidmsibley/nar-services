@@ -1,8 +1,10 @@
+# This automated data download from the USGS Tracking Water Quality over Time website have not received director's approval and as such are provisional and are subject to revision. The data are released on the conditions that neither the USGS nor the United States Government may be held liable for any damages resulting from its use.
+#
 #SITE_QW_ID USGS station identifier for water-quality sampling
 #SITE_QW_NAME USGS station name for water-quality sampling
 #SITE_FLOW_ID USGS or other agency station identifier for streamflow measurement
 #SITE_FLOW_NAME USGS or other agency station name for streamflow measurement
-#"DA Drainage area, in square miles"
+#DA Drainage area in square miles
 #LATITUDE Decimal latitude
 #LONGITUDE Decimal longitude
-#"SITE_TYPE Type of NAWQA Fixed site; possibilities include Reference, Agriculture (Agricultural Indicator Site), Urban (Urban Indicator Site), Large Inland Rivers, and Coastal Rivers"
+#SITE_TYPE Type of NAWQA Fixed site; possibilities include Reference Agriculture (Agricultural Indicator Site) Urban (Urban Indicator Site) Large Inland Rivers and Coastal Rivers
