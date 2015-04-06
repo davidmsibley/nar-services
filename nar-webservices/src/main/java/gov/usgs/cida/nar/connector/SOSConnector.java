@@ -43,9 +43,9 @@ public class SOSConnector implements IConnector, Closeable {
 	
 	private static final String NUMERIC_SUFFIX = "_NUMERIC";
 	
-	private SOSClient client;
-	private ColumnGrouping cg;
-	private SortedSet<OrderedFilter> filters;
+	private final SOSClient client;
+	private final ColumnGrouping cg;
+	private final SortedSet<OrderedFilter> filters;
 	private final Column valueColumn;
 	
 	private boolean isReady;

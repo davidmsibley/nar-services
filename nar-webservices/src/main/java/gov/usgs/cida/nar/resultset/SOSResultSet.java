@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,7 @@ public class SOSResultSet extends OGCResultSet {
 	private static final Column OBSERVED_PROPERTY_IN_COL = new SimpleColumn(ObservationMetadata.OBSERVED_PROPERTY_ELEMENT);
 	private static final Column FEATURE_OF_INTEREST_IN_COL = new SimpleColumn(ObservationMetadata.FEATURE_OF_INTEREST_ELEMENT);
 	
+	private final String uuid = UUID.randomUUID().toString().substring(0, 5);
 	private SortedSet<OrderedFilter> filters;
 	private SOSClient client;
 	private ResultSet currentFilteredResultSet;
@@ -98,9 +100,10 @@ public class SOSResultSet extends OGCResultSet {
 					hasFilter = nextFilter();
 				}
 
-				while (currentFilteredResultSet.next() && row == null && hasFilter) {
+				while (row == null && hasFilter && currentFilteredResultSet.next()) {
 					inRow = TableRow.buildTableRow(currentFilteredResultSet);
 					if (filter(inRow)) {
+						log.debug("  filtered {} {} {} {} {}", inRow.getValue(new SimpleColumn(Observation.TIME_ELEMENT)), this.uuid, this.filters.size(), inRow.getValue(new SimpleColumn(ObservationMetadata.PROCEDURE_ELEMENT)), inRow.getValue(new SimpleColumn(ObservationMetadata.OBSERVED_PROPERTY_ELEMENT)));
 						Map<Column, String> resultMap = new HashMap<>();
 						for (Column col : columns) {
 							String attribute = null;
@@ -123,6 +126,8 @@ public class SOSResultSet extends OGCResultSet {
 							resultMap.put(col, attribute);
 						}
 						row = new TableRow(columns, resultMap);
+					} else {
+						log.debug("unfiltered {} {} {} {} {}", inRow.getValue(new SimpleColumn(Observation.TIME_ELEMENT)), this.uuid, this.filters.size(), inRow.getValue(new SimpleColumn(ObservationMetadata.PROCEDURE_ELEMENT)), inRow.getValue(new SimpleColumn(ObservationMetadata.OBSERVED_PROPERTY_ELEMENT)));
 					}
 				}
 				

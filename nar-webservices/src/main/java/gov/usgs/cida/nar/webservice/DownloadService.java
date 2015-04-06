@@ -223,6 +223,7 @@ public class DownloadService {
 			final List<String> state,
 			final String startDateTime,
 			final String endDateTime) throws IOException {
+		LOG.debug("Adding {}", downloadType);
 		zip.putNextEntry(new ZipEntry(downloadType.name() + "." + mimeType.getFileSuffix()));
 		
 		//default to "All constituents"

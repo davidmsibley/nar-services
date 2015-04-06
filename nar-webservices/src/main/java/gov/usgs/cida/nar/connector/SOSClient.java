@@ -7,16 +7,13 @@ import gov.usgs.cida.sos.EndOfXmlStreamException;
 import gov.usgs.cida.sos.WaterML2Parser;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -42,21 +39,26 @@ public class SOSClient extends Thread implements AutoCloseable {
 	
 	private static final Logger log = LoggerFactory.getLogger(SOSClient.class);
 	private static final int MAX_CONNECTIONS = 8;
-	private static int numConnections = 0;
+	private transient static final AtomicInteger numConnections;
 	
-	private File file;
-	private String sosEndpoint;
-	private DateTime startTime;
-	private DateTime endTime;
-	private List<String> observedProperties;
-	private List<String> procedures;
-	private List<String> featuresOfInterest;
+	static {
+		numConnections = new AtomicInteger();
+	}
+	
+	private final File file;
+	private final String sosEndpoint;
+	private final DateTime startTime;
+	private final DateTime endTime;
+	private final List<String> observedProperties;
+	private final List<String> procedures;
+	private final List<String> featuresOfInterest;
 	private boolean fetched = false;
 
 	public SOSClient(String sosEndpoint, DateTime startTime, DateTime endTime, List<String> observedProperties,
 			List<String> procedures, List<String> featuresOfInterest) {
 		UUID randomUUID = UUID.randomUUID();
 		this.file = FileUtils.getFile(FileUtils.getTempDirectory(), randomUUID.toString() + ".xml");
+		log.debug("SOSClient on {}", randomUUID.toString());
 		this.sosEndpoint = sosEndpoint;
 		this.startTime = startTime;
 		this.endTime = endTime;
@@ -72,10 +74,11 @@ public class SOSClient extends Thread implements AutoCloseable {
 	
 	@Override
 	public void close() {
-		FileUtils.deleteQuietly(file);
+//		FileUtils.deleteQuietly(file);
 	}
 	
 	public List<DataAvailabilityMember> getDataAvailability() {
+		log.debug("Getting DataAvailability {}", this.file.getName());
 		List<DataAvailabilityMember> dataAvailabilityMembers = null;
 		
 		ClientConfig clientConfig = new ClientConfig();
@@ -110,6 +113,7 @@ public class SOSClient extends Thread implements AutoCloseable {
 	}
 
 	private synchronized void fetchData() {
+		log.debug("Fetching {}", this.file.getName());
 		if (fetched) {
 			return;
 		}
@@ -120,7 +124,7 @@ public class SOSClient extends Thread implements AutoCloseable {
 		
 		InputStream returnStream = null;
 		try {
-			while (numConnections >= MAX_CONNECTIONS) {
+			while (numConnections.get() >= MAX_CONNECTIONS) {
 				try {
 					sleep(250);
 				}
@@ -128,7 +132,8 @@ public class SOSClient extends Thread implements AutoCloseable {
 					log.debug("interrupted", ex);
 				}
 			}
-			numConnections++;
+			int numCon = numConnections.incrementAndGet();
+			log.debug("incremented active connections: {}", numCon);
 			UUID timerId = Profiler.startTimer();
 			Response response = client.target(this.sosEndpoint)
 				.path("")
@@ -147,7 +152,8 @@ public class SOSClient extends Thread implements AutoCloseable {
 		} catch (IOException | XMLStreamException | SQLException ex) {
 			log.error("Unable to get data from service", ex);
 		} finally {
-			numConnections--;
+			int numCon = numConnections.decrementAndGet();
+			log.debug("decremented active connections: {}", numCon);
 			IOUtils.closeQuietly(returnStream);
 			fetched = true;
 		}
