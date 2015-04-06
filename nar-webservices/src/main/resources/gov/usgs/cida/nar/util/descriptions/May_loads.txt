@@ -2,10 +2,10 @@
 #
 #SITE_QW_ID USGS station identifier for water-quality sampling
 #SITE_FLOW_ID USGS or other agency station identifier for streamflow measurement
-#"CONSTIT Abbreviation indicating constituent type.  Values include NO23, nitrate plus nitrite as N; TN, total nitrogen as N; TP, total phosphorus as P; SSC, suspended-sediment concentration"
-#WY Water year (10/1 through 9/30)
+#CONSTIT Abbreviation indicating constituent type.  Values include NO23: nitrate plus nitrite as N; TN: total nitrogen as N; TP: total phosphorus as P; SSC: suspended-sediment concentration
+#WY Water year
 #MONTH Numeric month
-#"MODTYPE The type of model used to compute load values.  Values include “COMP”, indicating the composite method; “CONTIN”, indicating loads were computed through the use of continuous nitrate data; “DAILY”, indicated data were computed using daily values (SSC only); REG, indicating models were computed using regression methods described in the technical information portion of the website using a 5-year moving window; “REG_2, REG_3, REG_4”, indicating models were computed using regression methods described in the technical information portion of the website but with a 2, 3, or 4-year moving windows (respectively) as opposed to a 5-year moving window; “REG_PRELIM”, indicating that a model was developed using data collecting during the initial 2-4 years in which a site was sampled, models at these sites will continue to be updated until 5 years of data are collected"
-#"TONS Load, in tons"
-#"TONS_L95 Lower 95% confidence interval of the load, in tons"
-#"TONS_U95 Upper 95% confidence interval of the load, in tons"
+#MODTYPE The type of model used to compute load values.  Values include “COMP” indicating the composite method; “CONTIN” indicating loads were computed through the use of continuous nitrate data; “DAILY” indicated data were computed using daily values (SSC only); REG indicating models were computed using regression methods described in the technical information portion of the website using a 5-year moving window; “REG_2; REG_3; REG_4” indicating models were computed using regression methods described in the technical information portion of the website but with a 2 3 or 4-year moving windows (respectively) as opposed to a 5-year moving window; “REG_PRELIM” indicating that a model was developed using data collecting during the initial 2-4 years in which a site was sampled; models at these sites will continue to be updated until 5 years of data are collected; and “REGHIST” indicating that models were historically computed according to procedures described in Aulenbach and others (2007)
+#TONS Load in tons
+#TONS_L95 Lower 95% confidence interval of the load in tons
+#TONS_U95 Upper 95% confidence interval of the load in tons
